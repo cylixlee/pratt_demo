@@ -81,6 +81,7 @@ class PrattParser(object):
             return None
         start = self.tokens[self.current]
         # Retrieve the next jump when the token is as prefix.
+        # We can use match cases here in order to get rid of function pointer table.
         jump = self.jumptable[start.kind][0]
         jump()
         while (
@@ -88,6 +89,7 @@ class PrattParser(object):
             and precedence <= self.tokens[self.current].kind.value
         ):
             # Retrieve the next jump when the token is as infix.
+            # We can use match here again.
             jump = self.jumptable[self.tokens[self.current].kind][1]
             jump()
 
