@@ -8,6 +8,12 @@ class TokenKind(Enum):
     MULTIPLY = 1
     NUMBER = 2
 
+    def increase(self) -> "TokenKind":
+        value = self.value + 1
+        if value >= self.__class__.NUMBER.value:
+            return self.__class__.NUMBER
+        return getattr(self.__class__, self.__class__._member_names_[value])
+
 
 class Token(object):
     def __init__(self, lexeme: str, kind: TokenKind) -> None:
@@ -96,7 +102,7 @@ class PrattParser(object):
             return None
         operator = self.tokens[self.current]
         self.current += 1
-        self.parse_precedence(operator.kind.value)
+        self.parse_precedence(operator.kind.increase().value)
         match operator.kind:
             case TokenKind.MULTIPLY:
                 self.emit(MultiplyInstruction())
@@ -131,7 +137,7 @@ def interpret(bytecode: list[BytecodeInstruction]) -> None:
 
 
 def main():
-    source = "114"
+    source = "1 + 2 * 3 + 4"
     tokens = simple_scan(source)
     parser = PrattParser(tokens)
     print("=== BYTECODE ===")
